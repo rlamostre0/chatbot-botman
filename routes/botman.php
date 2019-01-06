@@ -7,3 +7,5 @@ $botman->hears('Hi', function ($bot) {
     $bot->reply('Hello!');
 });
 $botman->hears('Start conversation', BotManController::class.'@startConversation');
+$botman->hears('GET_STARTED', BotManController::class.'@startConversation');
+$botman->fallback(BotManController::class.'@startConversation');
