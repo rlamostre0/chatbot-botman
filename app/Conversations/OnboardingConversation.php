@@ -40,6 +40,7 @@ class OnboardingConversation extends Conversation
         });
     }
     public function displayCategories(){
+
       $menus=new Menus;
       $menu=$menus->getRestaurantMenu();
       $options=[];
@@ -52,10 +53,16 @@ class OnboardingConversation extends Conversation
                 ->type('postback')
             );
       }
-      $this->bot->reply(GenericTemplate::create()
+      $question=GenericTemplate::create()
           ->addImageAspectRatio(GenericTemplate::RATIO_SQUARE)
-          ->addElements($options)
-      );
+          ->addElements($options);
+      return $this->ask($question, function (Answer $answer) use (&$menu) {
+        if ($answer->isInteractiveMessageReply()) {
+          $payload=json_decode(json_encode($this->bot->getMessage()->getPayload()),true);
+          $payload=str_replace("category","",$payload['postback']['payload']);
+          $this->say("View ".$menu[intval($payload)]['name']);
+        }
+      });
     }
     /**
      * Start the conversation
